@@ -12,7 +12,7 @@
 
     <modules>
         <module>demo</module>
-        <module>demo_selenium</module>
+        <module>demo-selenium</module>
     </modules>
 
 
