@@ -1,0 +1,330 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Moderne Integration Tests mit Testcontainers</title><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport"><link href="reveal.js-3.9.2/css/reveal.css" rel="stylesheet"><link href="reveal.js-3.9.2/plugin/title-footer/title-footer.css" rel="stylesheet"><link rel="stylesheet" href="reveal.js-3.9.2/css/theme/anderscore.css" id="theme"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css"><style>/* Stylesheet for CodeRay to match GitHub theme | MIT License | http://foundation.zurb.com */
+pre.CodeRay{background:#f7f7f8}
+.CodeRay .line-numbers{border-right:1px solid currentColor;opacity:.35;padding:0 .5em 0 0}
+.CodeRay span.line-numbers{display:inline-block;margin-right:.75em}
+.CodeRay .line-numbers strong{color:#000}
+table.CodeRay{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.CodeRay td{vertical-align:top;line-height:inherit}
+table.CodeRay td.line-numbers{text-align:right}
+table.CodeRay td.code{padding:0 0 0 .75em}
+.CodeRay .debug{color:#fff !important;background:#000080 !important}
+.CodeRay .annotation{color:#007}
+.CodeRay .attribute-name{color:#000080}
+.CodeRay .attribute-value{color:#700}
+.CodeRay .binary{color:#509}
+.CodeRay .comment{color:#998;font-style:italic}
+.CodeRay .char{color:#04d}
+.CodeRay .char .content{color:#04d}
+.CodeRay .char .delimiter{color:#039}
+.CodeRay .class{color:#458;font-weight:bold}
+.CodeRay .complex{color:#a08}
+.CodeRay .constant,.CodeRay .predefined-constant{color:#008080}
+.CodeRay .color{color:#099}
+.CodeRay .class-variable{color:#369}
+.CodeRay .decorator{color:#b0b}
+.CodeRay .definition{color:#099}
+.CodeRay .delimiter{color:#000}
+.CodeRay .doc{color:#970}
+.CodeRay .doctype{color:#34b}
+.CodeRay .doc-string{color:#d42}
+.CodeRay .escape{color:#666}
+.CodeRay .entity{color:#800}
+.CodeRay .error{color:#808}
+.CodeRay .exception{color:inherit}
+.CodeRay .filename{color:#099}
+.CodeRay .function{color:#900;font-weight:bold}
+.CodeRay .global-variable{color:#008080}
+.CodeRay .hex{color:#058}
+.CodeRay .integer,.CodeRay .float{color:#099}
+.CodeRay .include{color:#555}
+.CodeRay .inline{color:#000}
+.CodeRay .inline .inline{background:#ccc}
+.CodeRay .inline .inline .inline{background:#bbb}
+.CodeRay .inline .inline-delimiter{color:#d14}
+.CodeRay .inline-delimiter{color:#d14}
+.CodeRay .important{color:#555;font-weight:bold}
+.CodeRay .interpreted{color:#b2b}
+.CodeRay .instance-variable{color:#008080}
+.CodeRay .label{color:#970}
+.CodeRay .local-variable{color:#963}
+.CodeRay .octal{color:#40e}
+.CodeRay .predefined{color:#369}
+.CodeRay .preprocessor{color:#579}
+.CodeRay .pseudo-class{color:#555}
+.CodeRay .directive{font-weight:bold}
+.CodeRay .type{font-weight:bold}
+.CodeRay .predefined-type{color:inherit}
+.CodeRay .reserved,.CodeRay .keyword {color:#000;font-weight:bold}
+.CodeRay .key{color:#808}
+.CodeRay .key .delimiter{color:#606}
+.CodeRay .key .char{color:#80f}
+.CodeRay .value{color:#088}
+.CodeRay .regexp .delimiter{color:#808}
+.CodeRay .regexp .content{color:#808}
+.CodeRay .regexp .modifier{color:#808}
+.CodeRay .regexp .char{color:#d14}
+.CodeRay .regexp .function{color:#404;font-weight:bold}
+.CodeRay .string{color:#d20}
+.CodeRay .string .string .string{background:#ffd0d0}
+.CodeRay .string .content{color:#d14}
+.CodeRay .string .char{color:#d14}
+.CodeRay .string .delimiter{color:#d14}
+.CodeRay .shell{color:#d14}
+.CodeRay .shell .delimiter{color:#d14}
+.CodeRay .symbol{color:#990073}
+.CodeRay .symbol .content{color:#a60}
+.CodeRay .symbol .delimiter{color:#630}
+.CodeRay .tag{color:#008080}
+.CodeRay .tag-special{color:#d70}
+.CodeRay .variable{color:#036}
+.CodeRay .insert{background:#afa}
+.CodeRay .delete{background:#faa}
+.CodeRay .change{color:#aaf;background:#007}
+.CodeRay .head{color:#f8f;background:#505}
+.CodeRay .insert .insert{color:#080}
+.CodeRay .delete .delete{color:#800}
+.CodeRay .change .change{color:#66f}
+.CodeRay .head .head{color:#f4f}</style><link href="reveal.js-3.9.2/lib/css/zenburn.css" rel="stylesheet"><script>document.write( '<link rel="stylesheet" href="reveal.js-3.9.2/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );</script></head><body><div class="reveal"><div class="slides"><section id="_moderne_integration_tests_mit_testcontainers" class="center text-center"><h2>Moderne Integration Tests mit Testcontainers</h2><div class="paragraph margin-bottom-default"><p><span class="image"><img src="images/anderscore/itt.svg" alt="itt" height="450"></span></p></div>
+<div class="paragraph"><p><span class="image"><img src="images/anderscore/anderScore_white.jpg" alt="anderScore white" height="150"></span></p></div>
+<div class="openblock social-media"><div class="content"><div class="paragraph"><p><span class="image"><img src="images/social/twitter.png" alt="twitter" height="30"></span>
+@anderScoreGmbH
+<span class="image"><img src="images/social/facebook.png" alt="facebook" height="30"></span>
+anderScore.company
+<span class="image"><img src="images/social/meetup.svg" alt="meetup" height="30"></span>
+Java_Meetup_anderscore</p></div></div></div></section>
+<section id="_vorstellung" class="columns"><h2>Vorstellung</h2><div class="imageblock" style=""><img src="images/anderscore/dkraemer.jpg" alt="dkraemer" height="500"></div>
+<div class="openblock"><div class="content"><div class="paragraph heading"><p>Daniel Krämer</p></div>
+<div class="ulist"><ul><li><p>Senior Software Engineer &amp; Architect</p></li><li><p>Migration und Integration</p></li><li><p>DevOps</p></li><li><p>Testautomatisierung</p></li><li><p>Trainings, Vorträge, Artikel</p></li><li><p><span class="image"><img src="images/social/github.png" alt="github" width="30" height="30"></span> dkraemer-anderscore</p></li></ul></div></div></div></section>
+<section id="_unternehmen"><h2>Unternehmen</h2><div class="paragraph"><p>
+<head>
+<style>
+	span.r {
+		color:#225c4d;
+	}
+	ul.bullet li::before{
+  		content: "\25CF";
+  		color: #225c4d;
+  		display: inline-block;
+  		margin-right: 20px;
+	}
+	ul.checkmark li::before{
+  		content: "\2714";
+  		color: #225c4d;
+  		display: inline-block;
+  		margin-right: 11px;
+	}
+	ul.arrow li::before{
+  		content: "\2794";
+  		color: #225c4d;
+  		display: inline-block;
+  		margin-right: 11px;
+	}
+</style>
+</head>
+<body>
+<p>
+	<div style="position:relative; top:280px;">
+		Individuelle Anwendungsentwicklung - Java Enterprise, Web, Mobile
+		<ul class="bullet" style="list-style:none;">
+			<li>seit 2005 <span class="r">&#160;&#160;&#160;♦&#160;&#160;&#160;</span> in Köln <span class="r">&#160;&#160;&#160;♦&#160;&#160;&#160;</span> für alle Branchen <span class="r">&#160;&#160;&#160;♦&#160;&#160;&#160;</span> <img style="position:relative; top:17px" src="images/anderscore/goldschmiede.png" height="60"></li>
+			<li>nach Aufwand & zum Festpreis</li>
+		</ul>
+		<div class="fragment">
+			<ul class="checkmark" style="list-style:none;">
+				<li>Digitalisierung / Prozesse / Integration</li>
+				<li>Migration</li>
+				<li>Neuentwicklung</li>
+				<li>Notfall / kritische Situationen</li>
+			</ul><br>
+			<ul class="arrow" style="list-style:none;">
+				<li>pragmatisch, zielgerichtet, zuverlässig</li>
+			</ul>
+		</div>
+	</div>
+</p>
+<p class="fragment">
+	<img style="overflow:hidden; position:relative; bottom:30px; left:830px;" src="images/anderscore/Bereiche.png" height="600">
+</p>
+<p>
+	<div class="fragment">
+		<div style="position:relative; bottom:270px;">
+		Kompletter SW Life Cycle<br>
+			<ul class="bullet" style="list-style:none;">
+				<li>Projektmanagement / agile Methodik</li>
+				<li>Anforderungsanalyse</li>
+				<li>Architektur & SW-Design</li>
+				<li>Implementierung & Testautomation</li>
+				<li>Studien & Seminare</li>
+			</ul>
+		</div>
+		<div style="position:relative; left:850px; bottom:330px; color:#225c4d; font-weight:bold">
+			... und für Sie? Sprechen Sie uns an!
+		</div>
+	</div>
+</p>
+</body>
+</p></div></section>
+<section id="_test_pyramide"><h2>Test-Pyramide</h2><div class="imageblock" style=""><img src="images/test_pyramide.png" alt="test pyramide" height="800"></div></section>
+<section id="_warum_integration_tests" class="columns text-center"><h2>Warum Integration Tests?</h2><div class="imageblock" style=""><img src="images/unit-test-vs-integration-test.gif" alt="unit test vs integration test" height="800"></div></section>
+<section id="_herausforderung_integration_test" class="columns text-center"><h2>Herausforderung Integration Test</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p><strong>Fremdsysteme</strong></p><div class="ulist"><ul><li><p>Erreichbarkeit</p></li><li><p>Datenhoheit</p></li><li><p>Zustand</p></li><li><p>Performance</p></li><li><p>Nebenläufigkeit</p></li></ul></div></li></ul></div></div></div>
+<div class="openblock"><div class="content"><div class="ulist"><ul><li><p><strong>Unterschiedliche Umgebungen</strong></p><div class="ulist"><ul><li><p>Software</p></li><li><p>Versionen</p></li><li><p>Datenbankschema</p></li><li><p>Konfiguration</p></li></ul></div></li></ul></div></div></div></section>
+<section id="_erreichbarkeit_der_datenbank"><h2>Erreichbarkeit der Datenbank</h2><div class="imageblock" style=""><img src="images/single_user.png" alt="single user" height="694"></div></section>
+<section id="_erreichbarkeit_der_datenbank_2"><h2>Erreichbarkeit der Datenbank</h2><div class="imageblock" style=""><img src="images/multi_user.png" alt="multi user" height="800"></div></section>
+<section id="_erreichbarkeit_der_datenbank_3"><h2>Erreichbarkeit der Datenbank</h2><div class="imageblock" style=""><img src="images/multi_user_2.png" alt="multi user 2" height="800"></div></section>
+<section id="_erreichbarkeit_der_datenbank_4"><h2>Erreichbarkeit der Datenbank</h2><div class="imageblock" style=""><img src="images/test_failed.png" alt="test failed" height="894"></div></section>
+<section id="_was_würde_uns_helfen" class="columns text-center"><h2>Was würde uns helfen?</h2><div class="ulist"><ul><li><p>Einheitlichkeit</p></li><li><p>Reproduzierbarkeit</p></li><li><p>Kontrolle</p></li><li><p>Lokalität</p></li><li><p>Nähe zur Produktion</p></li></ul></div></section>
+<section id="_testcontainers" class="columns text-center"><h2>Testcontainers</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p><strong>Sprachübergreifende Bibliothek</strong></p></li><li><p><strong>MIT Lizenz</strong></p></li><li><p><strong>Aktuelle Version:</strong> 1.19.3 (November 2023)</p></li></ul></div></div></div>
+<div class="openblock"><div class="content"><div class="ulist"><ul><li><p><strong>Einsatzszenarien</strong></p><div class="ulist"><ul><li><p>Integration Tests (DB, Message Broker, etc.)</p></li><li><p>Anwendungstests (UI, Use Cases)</p></li><li><p>Einheitliche lokale Umgebung</p></li></ul></div></li><li><p><strong>Technologien</strong></p><div class="ulist"><ul><li><p>Docker</p></li><li><p>JUnit 4/5</p></li></ul></div></li></ul></div></div></div></section>
+<section id="_live_demo" class="text-center"><h2>Live Demo</h2><div class="paragraph heading"><p>Zeit für eine Live Demo!</p></div></section>
+<section id="_was_kann_testcontainers_sonst_noch" class="columns text-center"><h2>Was kann Testcontainers sonst noch?</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p><strong>GenericContainer</strong></p><div class="ulist"><ul><li><p>Fertiges Docker Image</p></li><li><p>On-the-fly Docker Image (Dockerfile DSL)</p></li><li><p>Ausführen oder Überschreiben von Commands</p></li></ul></div></li></ul></div></div></div>
+<div class="openblock"><div class="content"><div class="ulist"><ul><li><p><strong>Fluent API</strong></p><div class="ulist"><ul><li><p>Ports, Environment Variables</p></li><li><p>Shell Commands</p></li><li><p>Log Consumer</p></li></ul></div></li></ul></div></div></div>
+<div class="openblock"><div class="content"><pre class="CodeRay listingblock"><code class="java language-java">GenericContainer alpine =
+    <span class="keyword">new</span> GenericContainer(DockerImageName.parse(<span class="string"><span class="delimiter">&quot;</span><span class="content">alpine:3.19</span><span class="delimiter">&quot;</span></span>))
+            .withExposedPorts(<span class="integer">80</span>)
+            .withEnv(<span class="string"><span class="delimiter">&quot;</span><span class="content">MAGIC_NUMBER</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">42</span><span class="delimiter">&quot;</span></span>)
+            .withCommand(<span class="string"><span class="delimiter">&quot;</span><span class="content">/bin/sh</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">-c</span><span class="delimiter">&quot;</span></span>,
+            <span class="string"><span class="delimiter">&quot;</span><span class="content">while true; do echo </span><span class="char">\&quot;</span><span class="content">$MAGIC_NUMBER</span><span class="char">\&quot;</span><span class="content"> | nc -l -p 80; done</span><span class="delimiter">&quot;</span></span>);</code></pre></div></div></section>
+<section id="_was_kann_testcontainers_sonst_noch_2" class="columns text-center"><h2>Was kann Testcontainers sonst noch?</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p><strong>Netzwerk</strong></p><div class="ulist"><ul><li><p>Externe Ports zufällig</p></li><li><p>Zugang zu Host Ports möglich</p></li><li><p>Container-Netzwerke</p></li></ul></div></li></ul></div>
+<pre class="CodeRay listingblock"><code class="java language-java">Network network = Network.newNetwork();
+
+GenericContainer foo = <span class="keyword">new</span> GenericContainer(...)
+    .withNetwork(network)
+    .withNetworkAliases(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo</span><span class="delimiter">&quot;</span></span>);
+
+GenericContainer bar = <span class="keyword">new</span> GenericContainer(...)
+    .withNetwork(network);</code></pre></div></div></section>
+<section id="_was_kann_testcontainers_sonst_noch_3" class="columns"><h2>Was kann Testcontainers sonst noch?</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p><strong>Logs</strong></p><div class="ulist"><ul><li><p>Auslesen (stdout, stderr)</p></li><li><p>Streamen</p></li></ul></div></li></ul></div>
+<pre class="CodeRay listingblock"><code class="java language-java">Slf4jLogConsumer logConsumer = <span class="keyword">new</span> Slf4jLogConsumer(LOGGER);
+container.followOutput(logConsumer);</code></pre></div></div></section>
+<section id="_module" class="columns"><h2>Module</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p>DBMS (u.a. PostgreSQL, MySQL, DB2, Cassandra, Neo4j)</p></li><li><p>ElasticSearch</p></li><li><p>Kafka</p></li><li><p>Solr</p></li><li><p>HashiCorp Vault</p></li><li><p>Nginx</p></li><li><p>Webdriver (Selenium, inkl. VNC)</p></li></ul></div></div></div>
+<div class="openblock"><div class="content"><div class="imageblock" style=""><img src="images/container.png" alt="container" height="450"></div></div></div></section>
+<section id="_frontend_gui"><h2>Frontend - GUI</h2><div class="imageblock" style=""><img src="images/wekan_frontend.png" alt="wekan frontend" height="600"></div>
+<div class="imageblock" style=""><img src="images/seleniumg.png" alt="seleniumg" height="150"></div></section>
+<section id="_frontend_test"><h2>Frontend - Test</h2><pre class="CodeRay listingblock"><code class="java language-java"><span class="annotation">@LocalServerPort</span>
+<span class="directive">private</span> <span class="predefined-type">Integer</span> port;
+
+<span class="comment">// [...]</span>
+
+Testcontainers.exposeHostPorts(port);
+
+BrowserWebDriverContainer&lt;?&gt; container = <span class="keyword">new</span> BrowserWebDriverContainer&lt;&gt;()
+    .withCapabilities(<span class="keyword">new</span> ChromeOptions())
+    .withRecordingMode(RECORD_FAILING, <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">target/</span><span class="delimiter">&quot;</span></span>));
+
+container.start();
+
+RemoteWebDriver driver = <span class="keyword">new</span> RemoteWebDriver(container.getSeleniumAddress(), <span class="keyword">new</span> ChromeOptions());
+
+<span class="comment">// [...]</span>
+
+assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">Scheduler</span><span class="delimiter">&quot;</span></span>, driver.findElement(By.tagName(<span class="string"><span class="delimiter">&quot;</span><span class="content">h1</span><span class="delimiter">&quot;</span></span>)).getText());
+driver.findElement(By.id(<span class="string"><span class="delimiter">&quot;</span><span class="content">new</span><span class="delimiter">&quot;</span></span>)).click();
+
+<span class="comment">// [...]</span></code></pre></section>
+<section id="_testcontainers_cloud" class="columns"><h2>Testcontainers Cloud</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p>Auslagerung der Container in die Cloud</p></li><li><p>Statistiken (Dashboard)</p></li><li><p>Remote Debugging</p></li><li><p>Freies Kontingent + Payed Service</p></li></ul></div></div></div>
+<div class="imageblock" style=""><img src="images/testcontainers_cloud.png" alt="testcontainers cloud" height="600"></div></section>
+<section id="_testcontainers_desktop" class="columns"><h2>Testcontainers Desktop</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p>Umschalten zwischen lokaler Ausführung und Cloud</p></li><li><p>Anhalten und Debuggen von Containern</p></li><li><p>Verfügbar für Linux, Mac und Windows</p></li></ul></div></div></div>
+<div class="imageblock" style=""><img src="images/testcontainers_desktop.png" alt="testcontainers desktop" height="800"></div></section>
+<section id="_pitfalls" class="columns text-center"><h2>Pitfalls</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p>Zufällige Ports</p></li><li><p>Fixe DataSource im SpringContext</p></li><li><p>Kommunikation mit anderen Containern und Host</p></li></ul></div></div></div>
+<div class="openblock"><div class="content"><div class="imageblock" style=""><img src="images/pitfalls.jpg" alt="pitfalls" height="350"></div></div></div></section>
+<section id="_the_good_the_bad_the_ugly"><h2>The good, the bad &amp; the ugly</h2><div class="imageblock" style=""><img src="images/the_good_the_bad_the_ugly.jpg" alt="the good the bad the ugly" height="700"></div></section>
+<section id="_the_good" class="columns"><h2>The good</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p>Einfache Verwendung</p></li><li><p>Übersichtliche, stabile API</p></li><li><p>Verständliche Dokumentation</p></li><li><p>Gute Integration mit JUnit 4 und 5 sowie Spring Boot</p></li><li><p>Vielfältig einsetzbar</p></li><li><p>Skalierung über Testcontainers Cloud möglich</p></li></ul></div></div></div>
+<div class="openblock"><div class="content"><div class="imageblock" style=""><img src="images/thumb_up.png" alt="thumb up" height="500"></div></div></div></section>
+<section id="_the_bad" class="columns"><h2>The bad</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p>Performance und Ressourcenverbrauch</p></li><li><p>Parallele Testausführung eingeschränkt</p></li></ul></div></div></div>
+<div class="openblock"><div class="content"><div class="imageblock" style=""><img src="images/thumb_down.png" alt="thumb down" height="500"></div></div></div></section>
+<section id="_the_ugly" class="columns"><h2>The ugly</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p>Internes Datenmodell</p></li></ul></div>
+<pre class="CodeRay listingblock"><code class="java language-java"><span class="directive">public</span> <span class="type">class</span> <span class="class">PostgreSQLContainer</span>&lt;SELF <span class="directive">extends</span> PostgreSQLContainer&lt;SELF&gt;&gt; <span class="directive">extends</span> JdbcDatabaseContainer&lt;SELF&gt; {
+[...]
+}</code></pre>
+<pre class="CodeRay listingblock"><code class="java language-java">JdbcDatabaseContainer&lt;?&gt; container = <span class="keyword">new</span> PostgreSQLContainer&lt;&gt;();</code></pre></div></div>
+<div class="openblock"><div class="content"><div class="imageblock" style=""><img src="images/angry.jpg" alt="angry" height="500"></div></div></div></section>
+<section id="_links" class="columns text-center"><h2>Links</h2><div class="openblock"><div class="content"><div class="ulist"><ul><li><p>Testcontainers Dokumentation: <a href="https://www.testcontainers.org" class="bare">https://www.testcontainers.org</a></p></li><li><p>Docker Dokumentation: <a href="https://docs.docker.com" class="bare">https://docs.docker.com</a></p></li><li><p>Vortrag Sergei Egorov (Mitentwickler Testcontainers): <a href="https://www.youtube.com/watch?v=rv-NxOTMvDQ" class="bare">https://www.youtube.com/watch?v=rv-NxOTMvDQ</a> (Russisch)</p></li><li><p>Folien + Demo: <a href="https://github.com/anderscore-gmbh/itt-23" class="bare">https://github.com/anderscore-gmbh/itt-23</a></p></li></ul></div></div></div></section>
+<section id="_fragen" class="columns text-center"><h2>Fragen?</h2><div class="openblock"><div class="content"><div class="paragraph"><p><span class="image"><img src="images/question.jpg" alt="question" width="750" height="750"></span></p></div></div></div></section>
+<section id="_ende" class="text-center"><h2>Ende</h2><div class="paragraph heading margin-bottom-wide"><p>Vielen Dank!</p></div>
+<div class="paragraph"><p><span class="image"><img src="images/anderscore/itt.svg" alt="itt" height="400"></span></p></div>
+<div class="imageblock" style=""><img src="images/anderscore/anderScore_white.jpg" alt="anderScore white" width="700"></div>
+<div class="openblock social-media"><div class="content"><div class="paragraph"><p><span class="image"><img src="images/social/twitter.png" alt="twitter" height="30"></span>
+@anderScoreGmbH
+<span class="image"><img src="images/social/facebook.png" alt="facebook" height="30"></span>
+anderScore.company
+<span class="image"><img src="images/social/meetup.svg" alt="meetup" height="30"></span>
+Java_Meetup_anderscore</p></div></div></div></section></div></div><script src="reveal.js-3.9.2/lib/js/head.min.js"></script><script src="reveal.js-3.9.2/js/reveal.js"></script><script>// See https://github.com/hakimel/reveal.js#configuration for a full list of configuration options
+Reveal.initialize({
+  // Display controls in the bottom right corner
+  controls: true,
+  // Display a presentation progress bar
+  progress: true,
+  // Display the page number of the current slide
+  slideNumber: true,
+  // Push each slide change to the browser history
+  history: true,
+  // Enable keyboard shortcuts for navigation
+  keyboard: true,
+  // Enable the slide overview mode
+  overview: true,
+  // Vertical centering of slides
+  center: true,
+  // Enables touch navigation on devices with touch input
+  touch: true,
+  // Loop the presentation
+  loop: false,
+  // Change the presentation direction to be RTL
+  rtl: false,
+  // Turns fragments on and off globally
+  fragments: true,
+  // Flags if the presentation is running in an embedded mode,
+  // i.e. contained within a limited portion of the screen
+  embedded: false,
+  // Number of milliseconds between automatically proceeding to the
+  // next slide, disabled when set to 0, this value can be overwritten
+  // by using a data-autoslide attribute on your slides
+  autoSlide: 0,
+  // Stop auto-sliding after user input
+  autoSlideStoppable: true,
+  // Enable slide navigation via mouse wheel
+  mouseWheel: true,
+  // Hides the address bar on mobile devices
+  hideAddressBar: true,
+  // Opens links in an iframe preview overlay
+  previewLinks: false,
+  // Theme (e.g., beige, black, league, night, serif, simple, sky, solarized, white)
+  // NOTE setting the theme in the config no longer works in reveal.js 3.x
+  //theme: Reveal.getQueryHash().theme || 'anderscore',
+  // Transition style (e.g., none, fade, slide, convex, concave, zoom)
+  transition: Reveal.getQueryHash().transition || 'linear',
+  // Transition speed (e.g., default, fast, slow)
+  transitionSpeed: 'default',
+  // Transition style for full page slide backgrounds (e.g., none, fade, slide, convex, concave, zoom)
+  backgroundTransition: 'fade',
+  // Number of slides away from the current that are visible
+  viewDistance: 3,
+  // Parallax background image (e.g., "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'")
+  parallaxBackgroundImage: '',
+  // Parallax background size in CSS syntax (e.g., "2100px 900px")
+  parallaxBackgroundSize: '',
+
+  // The "normal" size of the presentation, aspect ratio will be preserved
+  // when the presentation is scaled to fit different resolutions. Can be
+  // specified using percentage units.
+  width: 1728,
+  height: 972,
+
+  // Factor of the display size that should remain empty around the content
+  margin: 0.1,
+
+  // Bounds for smallest/largest possible scale to apply to content
+  minScale: 0.2,
+  maxScale: 1.5,
+
+  // Optional libraries used to extend on reveal.js
+  dependencies: [
+      { src: 'reveal.js-3.9.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'reveal.js-3.9.2/plugin/title-footer/title-footer.js', async: true, callback: function()
+          {title_footer.initialize('Testcontainers', 'Daniel Krämer', 'anderScore GmbH • Frankenwerft 35 • 50667 Köln');}},
+      { src: 'reveal.js-3.9.2/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'reveal.js-3.9.2/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      
+      { src: 'reveal.js-3.9.2/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'reveal.js-3.9.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+  ]
+});</script></body></html>
